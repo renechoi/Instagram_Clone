@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 # permissions
-# from users.permissions import IsUserOwner
+from users.permissions import IsUserOwner
 
 # models
 from users.models import User
@@ -193,5 +193,102 @@ class AuthViewSet(ModelViewSet):
             {
                 "message": "비밀번호가 변경됐습니다."
             },
+            status=status.HTTP_200_OK
+        )
+        
+    
+class UserViewSet(ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [ IsAuthenticated, IsUserOwner ]
+
+    def change_password(self, request, pk):
+        password = request.data.get('password', None)
+
+        if password is None:
+            return Response(
+                {
+                    "message": "비밀번호를 입력해주세요."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        new_password = request.data.get('new_password', None)
+        if new_password is None:
+            return Response(
+                {
+                    "message": "비밀번호를 입력해주세요."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            # user = request.user
+            # :관리자
+            # user = User.objects.get(pk=pk)
+            # :권한 문제
+            user = self.get_object()
+        except Exception as e:
+            return Response(
+                {
+                    "message": str(e)
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            user.change_password(password, new_password)
+        except Exception as e:
+            return Response(
+                {
+                    "message": str()
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        return Response(
+            status=status.HTTP_200_OK
+        )
+
+    def upload_profile(self, request, pk):
+        profile_image = request.FILES.get('file', None)
+        if profile_image is None:
+            return Response(
+                {
+                    "message": "파일이 없습니다. 파일을 전송해주세요."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        try:
+            # 1. request.user
+            # 2. User.objects.get(pk=pk)
+            # 3. get_object
+            user = user.get_object()
+            user = user.upload_profile(profile_image)
+        except Exception as e:
+            return Response(
+                {
+                    "message": str(e)
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        return Response(
+            self.get_serializer(user).data,
+            status=status.HTTP_200_OK
+        )
+
+    def delete_profile(self, request, pk):
+        try:
+            user = self.get_object()
+            user = user.delete_profile()
+        except Exception as e:
+            return Response(
+                {
+                    "message": str(e)
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        return Response(
+            self.get_serializer(user).data,
             status=status.HTTP_200_OK
         )
