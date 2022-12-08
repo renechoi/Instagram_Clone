@@ -1,25 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Route, BrowserRouter, Routes } from 'react-router-dom';
 
-function App() {
+// Pages
+import NotFound from './pages/NotFound';
+import Signup from './pages/Signup';
+import Signin from './pages/Signin';
+import Password from './pages/Password';
+import Home from './pages/Home';
+// import Setting from './pages/Setting';
+import Profile from './pages/Profile';
+import Lab from './pages/Lab';
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      {/* <Header /> */}
+      <Routes>
+        <Route path="/" element={<Home/>}></Route>
+        <Route path="/signup" element={<Signup/>}></Route>
+        <Route path="/signin" element={<Signin/>}></Route>
+        <Route path="/password" element={<Password/>}></Route>
+        <Route path="/home" element={<Home/>}></Route>
+        {/* <Route path="/setting" element={<Setting/>}></Route> */}
+        <Route path="/:username" element={<Profile/>}></Route>
+        <Route path="/lab" element={<Lab/>}></Route>
+        <Route path="*" element={<NotFound/>}></Route>
+      </Routes>
+      {/* <FeedForm /> */}
+    </BrowserRouter>
   );
 }
 
