@@ -1,8 +1,14 @@
+// React modules
+import { useParams } from 'react-router-dom';
+
 const Profile = () => {
-    return (
-        <div className="center"><div>
-            Profile</div></div>
-    )
+  const { username } = useParams();
+
+  return (
+    <div className="center">
+      <div>{username}</div>
+    </div>
+  );
 }
 
 export default Profile;
